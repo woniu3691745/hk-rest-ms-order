@@ -8,26 +8,21 @@
         <div class="content">
             <div class="title">
                 <span class="brand"></span>
-                <span class="name">{{seller.name}}</span>
+                <span class="name">{{seller.storeName}}</span>
             </div>
             <div class="description">
-                {{seller.description + ' / ' + seller.deliveryTime + '分钟送达'}}
+                <span>营业时间 : {{seller.storeBusinessDay || "全年"}}</span>
             </div>
-            <div class="supports" v-if="seller.supports">
-                <div class="supports_desc">
-                    <span class="icon" :class="iconClassMap[seller.supports[0].type]"></span>
-                    <span class="text">{{seller.supports[0].description}}</span>
-                </div>
+            <div class="supports">
+              <div class="supports_desc">
+                <span class="text">上午：{{seller.storeBusinessAmStartHours}} - {{seller.storeBusinessAmEndHours}} 下午：{{seller.storeBusinessPmStartHours}} - {{seller.storeBusinessPmEndHours}}</span>
+              </div>
             </div>
-        </div>
-        <div class="support-count" v-if="seller.supports" @click="showDetails()">
-            <span class="count">{{seller.supports.length+'个'}}</span>
-            <i class="icon-keyboard_arrow_right"></i>
         </div>
   </div>
   <div class="bulletin-wrapper" @click="showDetails()">
     <span class="bulletin-title"></span>
-    <span class="bulletin-text">{{seller.bulletin}}</span>
+    <span class="bulletin-text">{{seller.storeNotice}}</span>
     <i class="icon-keyboard_arrow_right"></i>
   </div>
   <div class="background">
@@ -37,27 +32,22 @@
     <div v-if="detailShow" class="detail">
       <div class="detail-wrapper clearfix">
           <div class="detail-main">
-            <h1 class="name">{{seller.name}}</h1>
+            <h1 class="name">{{seller.storeName}}</h1>
             <div class="star-wrapper">
-              <star :size="48" :score="seller.score"></star>
+              <star :size="48" :score=5></star>
             </div>
             <div class="title">
               <div class="line"> </div>
-              <div class="text">优惠信息</div>
+              <div class="text">商家介绍</div>
               <div class="line"></div>
             </div>
-            <ul v-if="seller.supports" class="supports">
-              <li class="support-item" v-for="item in seller.supports">
-                <span class="icon" :class="iconClassMap[item.type]"></span>
-                <span class="text">{{item.description}}</span>
-              </li>
-            </ul>
+            <div class="bulletin">{{seller.userDescription}}</div>
             <div class="title">
               <div class="line"> </div>
               <div class="text">商家公告</div>
               <div class="line"></div>
             </div>
-            <div class="bulletin">{{seller.bulletin}}</div>
+            <div class="bulletin">{{seller.storeNotice}}</div>
           </div>
       </div>
       <div class="detail-close">

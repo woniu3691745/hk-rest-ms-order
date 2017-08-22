@@ -21,15 +21,11 @@
                 <img width="57" height="57" :src="food.icon"/>
               </div>
               <div class="content">
-                <h2>{{food.name}}</h2>
-                <p class="description" v-show="food.description">{{food.description}}</p>
-                <div class="sell-info">
-                  <span class="sellCount">月售{{food.sellCount}}份</span>
-                  <span class="rating">好评率{{food.rating}}%</span>
-                </div>
+                <h2>{{food.dishesName}}</h2>
+                <p class="description" v-show="food.dishesDescription">{{food.dishesDescription}}</p>
                 <div class="price">
-                  <span class="newPrice"><span class="unit">￥</span>{{food.price}}</span>
-                  <span v-show="food.oldPrice" class="oldPrice">￥{{food.oldPrice}}</span>
+                  <span class="newPrice"><span class="unit">￥</span>{{food.dishesDiscountPrice?food.dishesPrice*food.dishesDiscountPrice:food.dishesPrice}}</span>
+                  <span class="oldPrice">￥{{food.dishesPrice}}</span>
                 </div>
                 <div class="cartcontrol-wrapper">
                   <cartcontrol :food="food"></cartcontrol>
@@ -45,18 +41,14 @@
   </div>
 
 </template>
-
 <script>
 import iconMap from 'components/iconMap/iconMap'
 import BScroll from 'better-scroll'
 import shopCart from 'components/shopCart/shopCart'
 import cartcontrol from 'components/cartcontrol/cartcontrol'
 import foodDetail from 'components/foodDetail/foodDetail'
-import axios from 'axios'
+import { getAllMenus, getAllMenuInfoByCategory} from 'api/storeMenu';
 import Vue from 'vue'
-
-import {getInfo, logout} from 'api/login'
-import {downLoadQRCodeZip} from 'api/storeTable'
 
 const ERR_OK = 0
 const eventHub = new Vue()
@@ -65,24 +57,48 @@ export default {
     seller: Object
   },
   created() {
-    debugger;
-    getInfo().then(response => {
-      debugger;
-    })
-    axios.get('static/data.json').then((res) => {
+    /*axios.get('static/data.json').then((res) => {
       this.goods = res.data.goods
       this.$nextTick(() => {
         this._initScroll(); // 初始化scroll
         this._calculateHeight(); // 初始化列表高度列表
       })
-    });
+    });*/
+    /*var storeId = this.$data.storeId;
+    getAllMenus({storeId:storeId}).then(response => {
+      debugger;
+      this.goods = response.data;
+    })*/
+    getAllMenuInfoByCategory().then(response => {
+      var goodsTemp = response.data;
+      for(var i = 0; i < goodsTemp.length; i++){
+        var foodsTemp = goodsTemp[i].foods;
+        goodsTemp[i].name = this.$data.categoryMap[goodsTemp[i].name];
+        if(foodsTemp){
+          goodsTemp[i].foods = JSON.parse(foodsTemp);
+        }
+      }
+      this.goods = goodsTemp;
+      this.$nextTick(() => {
+        this._initScroll(); // 初始化scroll
+        this._calculateHeight(); // 初始化列表高度列表
+      })
+    })
   },
   data() {
     return {
       goods: [],
       listHeight: [],
       foodsScrollY: 0,
-      selectedFood: ''
+      selectedFood: '',
+      storeId:this.$route.params.storeId,
+      tableId:this.$route.params.tableId,
+      categoryMap:{
+        0:"热菜",
+        1:"冷饮",
+        2:"特色",
+        3:""
+      }
     }
   },
   computed: {

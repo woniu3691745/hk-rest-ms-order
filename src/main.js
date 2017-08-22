@@ -26,14 +26,14 @@ const store = new Vuex.Store({
 })
 const router = new VueRouter({
   routes: [{
-    path: '/goods',
-    component: goods
-  }, {
     path: '/ratings',
     component: ratings
   }, {
-    path: '/seller',
+    path: '/seller/:storeId/:tableId',
     component: seller
+  },{
+    path: '/goods/:storeId/:tableId',
+    component: goods
   }],
   linkActiveClass: 'active'
 })
@@ -50,4 +50,4 @@ new Vue({
   }
 }).$mount('#app')
 
-router.push('goods')
+//router.push('goods')

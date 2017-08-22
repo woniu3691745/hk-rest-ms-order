@@ -22,3 +22,7 @@ export function deleteMenu(query) {
 export function updateMenu(query) {
   return service(module, 'update', query);
 }
+
+export function getAllMenuInfoByCategory(query) {
+  return service(module, 'menuInfoByCategory', query, 'get');
+}

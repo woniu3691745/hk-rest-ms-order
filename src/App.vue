@@ -22,14 +22,11 @@
 <div>
   <v-header :seller="seller"></v-header>
   <div class="tab">
-    <div class="tab-item">
-      <router-link to="/goods">商品</router-link>
+    <div class="tab-item" @click="gotoMenu()">
+      商品
     </div>
-    <!--<div class="tab-item">
-      <router-link to="/ratings">评论</router-link>
-    </div>-->
-    <div class="tab-item">
-      <router-link to="/seller">商家</router-link>
+    <div class="tab-item" @click="gotoStore()">
+      商家
     </div>
   </div>
   <keep-alive>
@@ -41,20 +38,41 @@
 
 <script>
 import header from 'components/header/header'
-import axios from 'axios'
+import {getAllStores} from 'api/store'
 
 const ERR_OK = 0
 
 export default {
   data() {
     return {
-      seller: {}
+      seller: {},
+      storeId:this.$route.params.storeId,
+      tableId:this.$route.params.tableId
     }
   },
   created() {
-    axios.get('static/data.json').then((res) => {
-      this.seller = res.data.seller
+    var storeId = this.$data.storeId;
+    getAllStores({storeId:storeId}).then(response => {
+      this.seller = response.data[0];
+      this.seller.avatar = !this.seller.storeLogo?'/image/companyLogo.jpeg':'/api/store/edit/storeLogoDown/'
+                     + storeId +'/img.jpg?l=' +　new Date().getTime();
     })
+  },
+  methods: {
+    gotoStore() {
+      var storeId = this.$data.storeId,
+          tableId = this.$data.tableId;
+      this.$router.push({
+        path:'/seller/' +　storeId + '/' + tableId
+      });
+    },
+    gotoMenu() {
+      var storeId = this.$data.storeId,
+          tableId = this.$data.tableId;
+      this.$router.push({
+        path:'/goods/' +　storeId + '/' + tableId
+      });
+    }
   },
   components: {
     'v-header': header
