@@ -24,7 +24,7 @@
                 <h2>{{food.dishesName}}</h2>
                 <p class="description" v-show="food.dishesDescription">{{food.dishesDescription}}</p>
                 <div class="price">
-                  <span class="newPrice"><span class="unit">￥</span>{{food.dishesDiscountPrice?food.dishesPrice*food.dishesDiscountPrice:food.dishesPrice}}</span>
+                  <span class="newPrice"><span class="unit">￥</span>{{food.dishesPriceNow}}</span>
                   <span class="oldPrice">￥{{food.dishesPrice}}</span>
                 </div>
                 <div class="cartcontrol-wrapper">
@@ -36,7 +36,7 @@
         </li>
       </ul>
     </div>
-    <shopCart :deliveryPrice="seller.deliveryPrice" :minPrice = "seller.minPrice" :selectFoods="selectFoods"></shopCart>
+    <shopCart :selectFoods="selectFoods"></shopCart>
     <foodDetail :food="selectedFood" v-if="selectedFood" ref="myFood"></foodDetail>
   </div>
 
@@ -57,23 +57,11 @@ export default {
     seller: Object
   },
   created() {
-    /*axios.get('static/data.json').then((res) => {
-      this.goods = res.data.goods
-      this.$nextTick(() => {
-        this._initScroll(); // 初始化scroll
-        this._calculateHeight(); // 初始化列表高度列表
-      })
-    });*/
-    /*var storeId = this.$data.storeId;
-    getAllMenus({storeId:storeId}).then(response => {
-      debugger;
-      this.goods = response.data;
-    })*/
-    getAllMenuInfoByCategory().then(response => {
+    getAllMenuInfoByCategory(this.$data.storeId).then(response => {
       var goodsTemp = response.data;
       for(var i = 0; i < goodsTemp.length; i++){
         var foodsTemp = goodsTemp[i].foods;
-        goodsTemp[i].name = this.$data.categoryMap[goodsTemp[i].name];
+        //goodsTemp[i].name = this.$data.categoryMap[goodsTemp[i].name];
         if(foodsTemp){
           goodsTemp[i].foods = JSON.parse(foodsTemp);
         }

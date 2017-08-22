@@ -14,9 +14,6 @@
         <div class="price" :class="{'active':totalPrice}">
           ￥{{totalPrice}}
         </div>
-        <div class="desc">
-          另需要配送费￥{{deliveryPrice}}元
-        </div>
       </div>
       <div class="content-right" :class="{'enough':totalPrice>=minPrice}">
         {{payDesc}}
@@ -111,7 +108,7 @@ export default {
       let total = 0
       this.selectFoods.forEach((food) => {
         if (food.count) {
-          total += food.price * food.count
+          total += food.dishesPriceNow * food.count
         }
       })
       return total
@@ -130,14 +127,7 @@ export default {
       return false
     },
     payDesc() {
-      let diff = this.minPrice - this.totalPrice
-      if (!this.totalPrice) {
-        return `￥${this.totalPrice}起送`
-      } else if (diff > 0) {
-        return `还差￥${diff}元`
-      } else {
-        return '去结算'
-      }
+      return '去结算'
     }
   },
   methods: {

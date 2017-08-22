@@ -24,5 +24,5 @@ export function updateMenu(query) {
 }
 
 export function getAllMenuInfoByCategory(query) {
-  return service(module, 'menuInfoByCategory', query, 'get');
+  return service(module, 'menuInfoByCategory/'+query, query, 'get');
 }
