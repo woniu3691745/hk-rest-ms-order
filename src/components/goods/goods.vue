@@ -80,13 +80,7 @@ export default {
       foodsScrollY: 0,
       selectedFood: '',
       storeId:this.$route.params.storeId,
-      tableId:this.$route.params.tableId,
-      categoryMap:{
-        0:"热菜",
-        1:"冷饮",
-        2:"特色",
-        3:""
-      }
+      tableId:this.$route.params.tableId
     }
   },
   computed: {
