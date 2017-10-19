@@ -1,58 +1,59 @@
 <template lang="html">
   <div class="">
-  <div class="shopCart">
-    <div class="content">
-      <div class="content-left" @click="listToggle">
-        <div class="logo-wrapper">
-          <div class="badge" v-show="totalCount">
-            {{totalCount}}
+    <div class="shopCart">
+      <div class="content">
+        <div class="content-left" @click="listToggle">
+          <div class="logo-wrapper">
+            <div class="badge" v-show="totalCount">
+              {{totalCount}}
+            </div>
+            <div class="logo" :class="{'active':totalPrice}">
+              <i class="icon-shopping_cart"></i>
+            </div>
           </div>
-          <div class="logo" :class="{'active':totalPrice}">
-            <i class="icon-shopping_cart"></i>
+          <div class="price" :class="{'active':totalPrice}">
+            ￥{{totalPrice}}
           </div>
         </div>
-        <div class="price" :class="{'active':totalPrice}">
-          ￥{{totalPrice}}
+        <div class="content-right" :class="{'enough':this.totalPrice}" @click="orderMenu">
+          {{payDesc}}
         </div>
       </div>
-      <div class="content-right" :class="{'enough':totalPrice>=minPrice}">
-        {{payDesc}}
+      <div class="ball-container">
+        <transition name="drop" v-on:before-enter="beforeEnter"
+          v-on:enter="enter" v-on:after-enter="afterEnter"
+          v-for="(ball,index) in balls">
+          <div class="ball" v-show="ball.show">
+            <div class="inner inner-hook"></div>
+          </div>
+        </transition>
       </div>
-    </div>
-    <div class="ball-container">
-      <transition name="drop" v-on:before-enter="beforeEnter"
-        v-on:enter="enter" v-on:after-enter="afterEnter"
-        v-for="(ball,index) in balls">
-        <div class="ball" v-show="ball.show">
-          <div class="inner inner-hook"></div>
+      <transition name="transHeight">
+        <div class="shopcart-list" v-show="listShow">
+          <div class="list-header">
+            <h1 class="title">购物车</h1>
+            <span class="empty" @click="setEmpty()">清空</span>
+          </div>
+          <div class="list-content" ref="foodlist">
+            <ul>
+              <li class="food" v-for="food in selectFoods">
+                <span class="name">{{food.dishesName}}</span>
+                <div class="price">
+                  <span>￥{{food.dishesPriceNow * food.count}}</span>
+                </div>
+                <div class="cartcontrol-wrapper">
+                  <cartcontrol :food="food"></cartcontrol>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
       </transition>
     </div>
-    <transition name="transHeight">
-      <div class="shopcart-list" v-show="listShow">
-        <div class="list-header">
-          <h1 class="title">购物车</h1>
-          <span class="empty" @click="setEmpty()">清空</span>
-        </div>
-        <div class="list-content" ref="foodlist">
-          <ul>
-            <li class="food" v-for="food in selectFoods">
-              <span class="name">{{food.name}}</span>
-              <div class="price">
-                <span>￥{{food.price * food.count}}</span>
-              </div>
-              <div class="cartcontrol-wrapper">
-                <cartcontrol :food="food"></cartcontrol>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
+    <transition name="fade-backdrop">
+      <div class="backdrop" v-show="showBackdrop" @click="hideBackdrop"></div>
     </transition>
-  </div>
-  <transition name="fade-backdrop">
-    <div class="backdrop" v-show="showBackdrop" @click="hideBackdrop"></div>
-  </transition>
+    <orderDetail :food="selectFoods" v-if="selectFoods" ref="myOrder"></orderDetail>
   </div>
 </template>
 
@@ -60,6 +61,7 @@
 import cartcontrol from 'components/cartcontrol/cartcontrol'
 import backdrop from 'components/backdrop/backdrop'
 import BScroll from 'better-scroll'
+import orderDetail from 'components/orderDetail/orderDetail'
 
 export default {
   props: {
@@ -89,7 +91,8 @@ export default {
       }, {
         show: false
       }],
-      dropBalls: [],
+      dropBalls: [],  
+      selectedOrder: '',
       listShow: false
     }
   },
@@ -127,10 +130,19 @@ export default {
       return false
     },
     payDesc() {
-      return '去结算'
+      return '提交订单'
     }
   },
   methods: {
+    orderMenu() {
+      if(this.totalPrice){
+        this.listShow = false;
+        this.selectedOrder = this.selectFoods;
+        this.$nextTick(() => {
+          this.$refs.myOrder.showToggle()
+        })
+      }
+    },
     drop(el) {
       for (let i = 0, l = this.balls.length; i < l; i++) {
         let ball = this.balls[i]
@@ -207,7 +219,8 @@ export default {
   },
   components: {
     cartcontrol,
-    backdrop
+    backdrop,
+    orderDetail
   }
 }
 

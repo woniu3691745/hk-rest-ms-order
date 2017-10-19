@@ -23,10 +23,10 @@
   <v-header :seller="seller"></v-header>
   <div class="tab">
     <div class="tab-item" @click="gotoMenu()">
-      商品
+      <a :class="{ active: isMenuActive }">商品</a>
     </div>
     <div class="tab-item" @click="gotoStore()">
-      商家
+      <a :class="{ active: isStoreActive }">商家</a>
     </div>
   </div>
   <keep-alive>
@@ -46,6 +46,8 @@ export default {
   data() {
     return {
       seller: {},
+      isMenuActive:true,
+      isStoreActive:false,
       storeId:this.$route.params.storeId,
       tableId:this.$route.params.tableId
     }
@@ -62,6 +64,8 @@ export default {
     gotoStore() {
       var storeId = this.$data.storeId,
           tableId = this.$data.tableId;
+      this.$data.isMenuActive = false;
+      this.$data.isStoreActive = true;
       this.$router.push({
         path:'/seller/' +　storeId + '/' + tableId
       });
@@ -69,6 +73,8 @@ export default {
     gotoMenu() {
       var storeId = this.$data.storeId,
           tableId = this.$data.tableId;
+      this.$data.isMenuActive = true;
+      this.$data.isStoreActive = false;
       this.$router.push({
         path:'/goods/' +　storeId + '/' + tableId
       });
